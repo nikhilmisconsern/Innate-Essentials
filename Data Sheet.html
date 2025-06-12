@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Data Sheet Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to right, #fdfbfb, #ebedee);
+    }
+
+    .card {
+      background: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+      transition: all 0.3s ease;
+      border-top: 4px solid #38bdf8;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+      background: linear-gradient(to right, #3b82f6, #06b6d4);
+      color: white;
+      font-weight: 600;
+      padding: 0.6rem 1.4rem;
+      border-radius: 9999px;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 16px rgba(59, 130, 246, 0.4);
+    }
+
+    .heading-glow {
+      background: linear-gradient(to right, #2563eb, #0ea5e9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+<!-- 🔹 NAVBAR -->
+<nav class="w-full bg-white shadow-lg sticky top-0 z-50 py-2">
+  <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between">
+    <!-- Logo -->
+    <div class="mb-2 sm:mb-0">
+      <img src="https://drive.google.com/uc?export=view&id=1xet5XWEed7wj36eyuyF6JwkH5DaBzBVz" alt="Innate Essentials Logo" class="h-8 sm:h-10 object-contain" />
+    </div>
+    <!-- Nav Links -->
+    <div class="flex gap-3 flex-wrap justify-center text-sm">
+      <a href="index.html" class="px-3 py-1.5 rounded-full font-medium text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition">Home</a>
+      <a href="https://docs.google.com/spreadsheets/d/YOUR-DATA-SHEET-ID" target="_blank" class="px-3 py-1.5 rounded-full font-medium text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition">Data Sheet</a>
+      <a href="https://docs.google.com/spreadsheets/d/YOUR-KRA-KPI-SHEET-ID" target="_blank" class="px-3 py-1.5 rounded-full font-medium text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition">KRA / KPI Sheet</a>
+      <a href="https://lookerstudio.google.com/reporting/YOUR-LOOKER-DASHBOARD-ID" target="_blank" class="px-3 py-1.5 rounded-full font-medium text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition">Dashboard</a>
+    </div>
+  </div>
+</nav>
+
+  <!-- 🔹 HEADER -->
+  <header class="text-center my-10 px-4">
+    <h1 class="text-4xl md:text-5xl font-bold heading-glow">Choose Your Profile</h1>
+    <p class="text-gray-600 mt-2 text-lg">Secure access to your personalized data sheet</p>
+  </header>
+
+  <!-- 🔹 EMPLOYEE CARDS -->
+  <main class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-6xl w-full mx-auto px-6 mb-12">
+    <div class="card text-center">
+      <h2 class="text-xl font-semibold text-gray-800 mb-1">Ms. Palak</h2>
+      <p class="text-sm text-gray-500 mb-4">Sales Team</p>
+      <a href="https://docs.google.com/spreadsheets/d/ROHIT-SHEET-ID" target="_blank" class="btn">Open Sheet</a>
+    </div>
+
+    <div class="card text-center">
+      <h2 class="text-xl font-semibold text-gray-800 mb-1">Ms. Sonal</h2>
+      <p class="text-sm text-gray-500 mb-4">Analytics Team</p>
+      <a href="https://docs.google.com/spreadsheets/d/NIKHIL-SHEET-ID" target="_blank" class="btn">Open Sheet</a>
+    </div>
+
+    <div class="card text-center">
+      <h2 class="text-xl font-semibold text-gray-800 mb-1">Ms. Simran</h2>
+      <p class="text-sm text-gray-500 mb-4">Regional Manager</p>
+      <a href="https://docs.google.com/spreadsheets/d/AMIT-SHEET-ID" target="_blank" class="btn">Open Sheet</a>
+    </div>
+
+    <div class="card text-center">
+      <h2 class="text-xl font-semibold text-gray-800 mb-1">Ms. Seema</h2>
+      <p class="text-sm text-gray-500 mb-4">Regional Manager</p>
+      <a href="https://docs.google.com/spreadsheets/d/AMIT-SHEET-ID" target="_blank" class="btn">Open Sheet</a>
+    </div>
+
+    <div class="card text-center">
+      <h2 class="text-xl font-semibold text-gray-800 mb-1">Mr. Rajwinder</h2>
+      <p class="text-sm text-gray-500 mb-4">Regional Manager</p>
+      <a href="https://docs.google.com/spreadsheets/d/AMIT-SHEET-ID" target="_blank" class="btn">Open Sheet</a>
+    </div>
+
+    <div class="card text-center">
+      <h2 class="text-xl font-semibold text-gray-800 mb-1">Mr. Prabhakar</h2>
+      <p class="text-sm text-gray-500 mb-4">Regional Manager</p>
+      <a href="https://docs.google.com/spreadsheets/d/AMIT-SHEET-ID" target="_blank" class="btn">Open Sheet</a>
+    </div>
+  </main>
+
+  <!-- 🔹 FOOTER -->
+  <footer class="bg-[#1e2228] text-gray-400 flex flex-col sm:flex-row items-center justify-between px-6 py-3 w-full text-sm mt-auto">
+    <div class="mb-2 sm:mb-0">© Consern Pharma Limited. All rights reserved.</div>
+    <div class="flex space-x-2">
+      <a href="#" class="bg-[#1DA1F2] rounded-full w-9 h-9 flex items-center justify-center hover:scale-105 transition" title="Twitter">
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/twitter.svg" alt="Twitter" class="w-5 h-5 invert" />
+      </a>
+      <a href="#" class="bg-[#1877F2] rounded-full w-9 h-9 flex items-center justify-center hover:scale-105 transition" title="Facebook">
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/facebook.svg" alt="Facebook" class="w-5 h-5 invert" />
+      </a>
+      <a href="#" class="bg-[#0077B5] rounded-full w-9 h-9 flex items-center justify-center hover:scale-105 transition" title="LinkedIn">
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" alt="LinkedIn" class="w-5 h-5 invert" />
+      </a>
+      <a href="#" class="bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 rounded-full w-9 h-9 flex items-center justify-center hover:scale-105 transition" title="Instagram">
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/instagram.svg" alt="Instagram" class="w-5 h-5 invert" />
+      </a>
+    </div>
+  </footer>
+
+</body>
+</html>
