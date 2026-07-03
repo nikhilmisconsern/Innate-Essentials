@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KRA / KPI Dashboard — Consern Pharma</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════════════════════════════
+   TOKENS — Matching login.html theme (deep navy + light glass)
+   ════════════════════════════════════════════════════════════════ */
+:root {
+  --bg: #eef2f8;
+  --bg2: #e4ecf6;
+  --bg3: #d8e5f0;
+  --card: #ffffff;
+  --border: rgba(99,130,200,0.14);
+  --border2: rgba(99,130,200,0.22);
+  --ink: #0f2448;
+  --ink2: #1e3a6e;
+  --ink3: #4a6490;
+  --ink4: #8fa4c8;
+  --navy: #1a3a6e;
+  --navy2: #2563eb;
+  --navy3: #3b82f6;
+  --teal: #38bdf8;
+  --teal2: #0ea5e9;
+  --teal-bg: rgba(56,189,248,0.08);
+  --teal-bg2: rgba(56,189,248,0.15);
+  --gold: #fbbf24;
+  --gold2: #fde68a;
+  --green: #34d399;
+  --green2: #10b981;
+  --red: #dc2626;
+  --red2: #ef4444;
+  --red-bg: rgba(220,38,38,0.06);
+  --red-bg2: rgba(220,38,38,0.12);
+  --grn: #059669;
+  --grn-bg: rgba(52,211,153,0.08);
+  --grn-bg2: rgba(52,211,153,0.15);
+  --sh1: 0 1px 3px rgba(99,130,200,0.08);
+  --sh2: 0 4px 16px rgba(99,130,200,0.12);
+  --sh3: 0 8px 32px rgba(99,130,200,0.16);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--bg);
+  min-height: 100vh;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ANIMATED BACKGROUND — Same as login.html
+   ════════════════════════════════════════════════════════════════ */
+.bg-layer {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: linear-gradient(145deg, #dde8f8 0%, #eaf2ff 40%, #f0f7ff 70%, #e8f0fb 100%);
+  overflow: hidden;
+}
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(90px); pointer-events: none;
+}
+.orb1 { width:600px; height:450px; background:radial-gradient(ellipse,rgba(56,189,248,0.22) 0%,transparent 70%); top:-160px; left:-180px; animation:drift1 18s ease-in-out infinite alternate; }
+.orb2 { width:500px; height:500px; background:radial-gradient(ellipse,rgba(99,102,241,0.14) 0%,transparent 70%); bottom:-200px; right:-160px; animation:drift2 22s ease-in-out infinite alternate; }
+.orb3 { width:400px; height:400px; background:radial-gradient(ellipse,rgba(16,185,129,0.10) 0%,transparent 70%); top:40%; left:55%; animation:drift3 16s ease-in-out infinite alternate; }
+.bg-grid {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(99,130,200,0.08) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, black 30%, transparent 100%);
+}
+@keyframes drift1 { from{transform:translate(0,0) scale(1)} to{transform:translate(60px,40px) scale(1.10)} }
+@keyframes drift2 { from{transform:translate(0,0) scale(1)} to{transform:translate(-40px,-60px) scale(1.08)} }
+@keyframes drift3 { from{transform:translate(0,0)} to{transform:translate(-30px,40px)} }
+
+/* ════════════════════════════════════════════════════════════════
+   LAYOUT SHELL
+   ════════════════════════════════════════════════════════════════ */
+#mainWrap { display: none; min-height: 100vh; position: relative; z-index: 1; }
+
+/* ════════════════════════════════════════════════════════════════
+   TOP NAV — Matching login navy theme
+   ════════════════════════════════════════════════════════════════ */
+.topnav {
+  background: linear-gradient(135deg, #1a3a6e 0%, #1e4480 50%, #163260 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 0 24px;
+  height: 54px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 2px 20px rgba(26,58,110,0.35);
+}
+
+/* Grid overlay on nav */
+.topnav::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+/* Gradient stripe at bottom of nav */
+.topnav::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--teal) 0%, #6366f1 40%, var(--green) 70%, var(--gold) 100%);
+}
+
+.nav-brand { display: flex; align-items: center; gap: 11px; position: relative; z-index: 2; }
+.nav-logo {
+  width: 120px; height: 38px; border-radius: 8px; flex-shrink: 0;
+  background: #ffffff;
+  border: none;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; padding: 4px 8px;
+}
+.nav-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.nav-logo svg { width: 17px; height: 17px; stroke: #38bdf8; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.nav-brand-text { display: flex; flex-direction: column; }
+.nav-brand h1 { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.95); letter-spacing: -0.1px; line-height: 1.2; font-family: 'DM Sans', sans-serif; }
+.nav-brand h1 span { color: var(--teal); }
+.nav-company { font-size: 9.5px; color: rgba(255,255,255,0.32); font-weight: 400; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 1px; }
+
+.nav-right { display: flex; align-items: center; gap: 10px; position: relative; z-index: 2; }
+.nav-yr {
+  background: rgba(56,189,248,0.12);
+  border: 1px solid rgba(56,189,248,0.25);
+  color: var(--teal); font-size: 10px; font-weight: 600;
+  padding: 3px 10px; border-radius: 20px; letter-spacing: 0.3px;
+}
+.nav-div { width: 1px; height: 20px; background: rgba(255,255,255,0.10); }
+
+.nav-user {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 10px; padding: 5px 10px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.nav-user:hover { background: rgba(255,255,255,0.15); }
+.nav-av {
+  width: 24px; height: 24px; border-radius: 7px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--teal2), var(--navy2));
+  font-size: 9px; font-weight: 700; color: white;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(255,255,255,0.20);
+}
+.nav-nm { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.88); }
+.nav-role { font-size: 9px; color: rgba(255,255,255,0.38); font-weight: 400; margin-left: 2px; }
+
+.btn-logout {
+  background: none; border: none; cursor: pointer; padding: 3px 6px;
+  font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.40);
+  transition: color 0.15s; font-family: 'DM Sans', sans-serif;
+  border-left: 1px solid rgba(255,255,255,0.10); margin-left: 4px; padding-left: 10px;
+}
+.btn-logout:hover { color: #fca5a5; }
+
+.btn-refresh {
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 8px; padding: 5px 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 10.5px; font-weight: 600;
+  color: rgba(255,255,255,0.75);
+  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 5px;
+}
+.btn-refresh:hover { background: rgba(56,189,248,0.20); border-color: rgba(56,189,248,0.35); color: var(--teal); }
+.btn-refresh:disabled { opacity: 0.4; pointer-events: none; }
+.btn-refresh svg { stroke: currentColor; }
+
+/* Live indicator */
+.nav-live {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 10px; font-weight: 500; color: rgba(52,211,153,0.70);
+}
+.nav-live-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px rgba(52,211,153,0.9);
+  animation: livePulse 2s ease-in-out infinite;
+}
+@keyframes livePulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+/* ════════════════════════════════════════════════════════════════
+   ADMIN TABS BAR
+   ════════════════════════════════════════════════════════════════ */
+#adminTabs {
+  background: rgba(255,255,255,0.78);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border2);
+  padding: 0 24px;
+  display: none; align-items: center; gap: 0;
+  overflow-x: auto; scrollbar-width: none;
+  box-shadow: 0 2px 8px rgba(99,130,200,0.06);
+}
+#adminTabs::-webkit-scrollbar { display: none; }
+#adminTabs.on { display: flex; }
+
+.admin-label {
+  font-size: 9px; font-weight: 700; color: var(--ink4);
+  text-transform: uppercase; letter-spacing: 1px;
+  padding-right: 12px; border-right: 1px solid var(--border2);
+  margin-right: 6px; line-height: 42px; flex-shrink: 0; white-space: nowrap;
+}
+
+.emp-tab {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 14px; height: 42px; border: none; background: none;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
+  color: var(--ink3); border-bottom: 2.5px solid transparent;
+  transition: all 0.18s; white-space: nowrap;
+}
+.emp-tab:hover { color: var(--navy2); background: rgba(37,99,235,0.05); }
+.emp-tab.on { color: var(--navy2); font-weight: 700; border-bottom-color: var(--navy2); background: rgba(37,99,235,0.06); }
+
+.tab-sc { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 6px; }
+.tab-sc.neg { background: var(--red-bg); color: var(--red); }
+.tab-sc.pos { background: var(--grn-bg); color: var(--grn); }
+.tab-sc.zero { background: var(--bg3); color: var(--ink4); }
+.tab-sc.loading { background: var(--bg3); color: var(--ink4); }
+
+/* Admin overview button */
+.btn-overview {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 14px; height: 42px; border: none; background: none;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
+  color: var(--navy2); border-bottom: 2.5px solid transparent;
+  transition: all 0.18s; white-space: nowrap; margin-left: auto;
+  border-left: 1px solid var(--border);
+}
+.btn-overview:hover { background: rgba(37,99,235,0.06); color: var(--navy); }
+.btn-overview.on { border-bottom-color: var(--gold); color: var(--navy); }
+
+/* ════════════════════════════════════════════════════════════════
+   PAGE CONTAINER
+   ════════════════════════════════════════════════════════════════ */
+.page { width: 100%; margin: 0; padding: 16px 24px 24px; }
+
+/* ════════════════════════════════════════════════════════════════
+   ADMIN OVERVIEW PANEL
+   ════════════════════════════════════════════════════════════════ */
+#adminOverview { display: none; }
+#adminOverview.on { display: block; }
+
+.overview-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-weight: 500; color: var(--ink); margin-bottom: 4px;
+}
+.overview-title em { font-style: italic; color: var(--navy2); }
+.overview-sub { font-size: 12px; color: var(--ink4); margin-bottom: 16px; }
+
+.overview-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px;
+}
+
+.emp-card {
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 18px 20px 16px;
+  box-shadow: var(--sh1);
+  cursor: pointer;
+  transition: all 0.22s;
+  position: relative; overflow: hidden;
+}
+.emp-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--navy2), var(--teal));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.25s;
+}
+.emp-card:hover { box-shadow: var(--sh2); transform: translateY(-2px); border-color: rgba(37,99,235,0.25); }
+.emp-card:hover::before { transform: scaleX(1); }
+
+.emp-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.emp-av {
+  width: 42px; height: 42px; border-radius: 13px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--navy), var(--navy2));
+  font-size: 14px; font-weight: 700; color: white;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(37,99,235,0.25);
+  box-shadow: 0 4px 12px rgba(37,99,235,0.20);
+  font-family: 'Playfair Display', serif;
+}
+.emp-card-info { flex: 1; }
+.emp-card-name { font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.2; }
+.emp-card-dept { font-size: 10.5px; color: var(--ink4); font-weight: 400; margin-top: 2px; }
+
+.emp-card-score {
+  font-size: 22px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1;
+}
+.emp-card-score.neg { color: var(--red); }
+.emp-card-score.pos { color: var(--grn); }
+.emp-card-score.zero { color: var(--ink4); }
+
+.emp-card-kpis { display: flex; flex-direction: column; gap: 6px; }
+.kpi-row { display: flex; justify-content: space-between; align-items: center; }
+.kpi-row-name { font-size: 11px; color: var(--ink3); font-weight: 500; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 8px; }
+.kpi-row-vals { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.kpi-actual { font-size: 11px; font-weight: 700; color: var(--ink); font-family: 'JetBrains Mono', monospace; }
+.kpi-slash { font-size: 10px; color: var(--ink4); }
+.kpi-target { font-size: 10px; color: var(--ink4); font-family: 'JetBrains Mono', monospace; }
+
+.emp-card-footer {
+  margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.emp-card-badge {
+  font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px;
+}
+.emp-card-badge.pos { background: var(--grn-bg); color: var(--grn); border: 1px solid var(--grn-bg2); }
+.emp-card-badge.neg { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-bg2); }
+.emp-card-badge.zero { background: var(--bg3); color: var(--ink4); border: 1px solid var(--border); }
+.emp-card-action { font-size: 10.5px; font-weight: 600; color: var(--navy2); display: flex; align-items: center; gap: 4px; }
+.emp-card-action svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; }
+.emp-card-loading { text-align: center; padding: 20px 0; color: var(--ink4); font-size: 11px; }
+
+/* ════════════════════════════════════════════════════════════════
+   INDIVIDUAL DASHBOARD
+   ════════════════════════════════════════════════════════════════ */
+#dashView { display: block; }
+
+/* Dash Header */
+.dash-hdr {
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 16px 22px;
+  margin-bottom: 14px;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+  box-shadow: var(--sh1);
+}
+.dash-hdr h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 500; color: var(--ink); line-height: 1.2;
+}
+.dash-hdr h2 span { color: var(--navy2); font-style: italic; }
+.dash-hdr .upd { font-size: 10px; color: var(--ink4); margin-top: 3px; }
+.hdr-chips { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.chip { font-size: 10px; font-weight: 600; padding: 4px 11px; border-radius: 20px; }
+.chip.dept { background: rgba(37,99,235,0.08); color: var(--navy2); border: 1px solid rgba(37,99,235,0.18); }
+.chip.yr { background: var(--bg2); color: var(--ink3); border: 1px solid var(--border2); }
+.chip.live { background: var(--grn-bg); color: var(--grn); border: 1px solid var(--grn-bg2); display: flex; align-items: center; gap: 5px; }
+.chip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px rgba(52,211,153,0.8); animation: livePulse 2s ease-in-out infinite; }
+
+/* Score classes */
+.ks.neg,.kscr.neg,.wscore.neg,.qs-val.neg,.score-badge.neg { background: var(--red-bg); color: var(--red); }
+.ks.pos,.kscr.pos,.wscore.pos,.qs-val.pos,.score-badge.pos { background: var(--grn-bg); color: var(--grn); }
+.ks.zero,.kscr.zero,.wscore.zero,.qs-val.zero,.score-badge.zero { background: var(--bg3); color: var(--ink4); }
+.wscore { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 8px; letter-spacing: -0.2px; font-family: 'JetBrains Mono', monospace; }
+
+/* Main grid */
+.main-grid { display: grid; grid-template-columns: 1fr 400px; gap: 14px; align-items: stretch; }
+@media(max-width:1200px) { .main-grid { grid-template-columns: 1fr; } }
+
+/* Weekly Panel */
+.wpanel {
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  overflow: hidden; box-shadow: var(--sh1); height: 100%; display: flex; flex-direction: column;
+}
+.panel-top {
+  background: rgba(26,58,110,0.04);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+}
+.panel-top h3 { font-size: 13px; font-weight: 700; color: var(--ink); }
+.panel-top p { font-size: 10px; color: var(--ink4); margin-top: 1px; }
+.wk-btns { display: flex; gap: 4px; flex-wrap: wrap; }
+.wk-btn {
+  background: rgba(255,255,255,0.90);
+  border: 1.5px solid var(--border2);
+  color: var(--ink3);
+  padding: 4px 9px; border-radius: 7px; font-size: 10px; font-weight: 700;
+  cursor: pointer; transition: all 0.15s; font-family: 'DM Sans', sans-serif;
+}
+.wk-btn:hover { border-color: var(--navy2); color: var(--navy2); background: rgba(37,99,235,0.06); }
+.wk-btn.on {
+  background: linear-gradient(135deg, var(--navy), var(--navy2));
+  border-color: var(--navy2); color: white;
+  box-shadow: 0 2px 10px rgba(37,99,235,0.28);
+}
+
+.cards-body { padding: 12px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+.cards-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.cards-row .wcard { flex: 0 0 auto; width: calc(33.333% - 8px); min-width: 260px; max-width: 100%; }
+#row1 .wcard { flex: 1 1 0; min-width: 260px; }
+
+/* Week Card */
+.wcard {
+  background: rgba(255,255,255,0.90);
+  border: 1px solid var(--border2);
+  border-radius: 13px;
+  padding: 0; box-shadow: var(--sh1);
+  animation: cIn 0.25s ease both;
+  overflow: hidden; transition: all 0.2s;
+  position: relative;
+}
+.wcard:hover { box-shadow: var(--sh2); transform: translateY(-2px); border-color: rgba(37,99,235,0.25); }
+@keyframes cIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+.wcard.wtd {
+  border-color: rgba(37,99,235,0.30);
+  box-shadow: 0 0 0 1px rgba(37,99,235,0.06), var(--sh1);
+}
+.wcard.wtd::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--navy), var(--navy2), var(--teal));
+}
+
+.wcard-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 11px 14px 6px; position: relative;
+}
+.wcard-header h4 { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: -0.1px; }
+
+/* Date-range pill in header */
+.wcard-daterange {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(26,58,110,0.07);
+  border: 1px solid rgba(26,58,110,0.13);
+  border-radius: 20px; padding: 3px 10px;
+  font-size: 10px; font-weight: 600; color: var(--ink2);
+  white-space: nowrap; letter-spacing: 0.1px;
+}
+.wcard-daterange svg { flex-shrink:0; stroke:var(--navy2); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+
+/* Score footer bar — compact, full-width, navy label + colored value */
+.wcard-score-bar {
+  display: flex; align-items: stretch;
+  border-top: 2px solid rgba(37,99,235,0.25);
+}
+.wcard-score-bar .wsb-label {
+  background: linear-gradient(135deg, var(--navy), var(--navy2));
+  color: white; font-weight: 700; font-size: 10.5px;
+  text-transform: uppercase; letter-spacing: 0.6px;
+  padding: 7px 14px; flex: 1;
+  display: flex; align-items: center;
+}
+.wcard-score-bar .wsb-val {
+  background: rgba(37,99,235,0.06);
+  padding: 7px 14px;
+  display: flex; align-items: center; justify-content: flex-end;
+  min-width: 72px;
+}
+.wcard-score-bar .wsb-val .qs-val { font-size: 11px; font-weight: 800; }
+
+.wcard-date {
+  font-size: 10px; color: var(--ink3); font-weight: 500;
+  padding: 0 14px 9px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 6px;
+}
+.wcard-date::before {
+  content: ''; display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--navy2);
+}
+
+/* KPI Table */
+.kpi-table { width: 100%; border-collapse: collapse; font-size: 11px; table-layout: fixed; }
+.kpi-table thead th {
+  background: rgba(26,58,110,0.04);
+  border-bottom: 1px solid var(--border);
+  font-size: 9px; font-weight: 700; color: var(--ink2);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 6px 10px; text-align: right; white-space: nowrap;
+}
+.kpi-table thead th:first-child { text-align: left; width: 40%; }
+.kpi-table thead th:nth-child(2) { width: 20%; }
+.kpi-table thead th:nth-child(3) { width: 20%; }
+.kpi-table thead th:nth-child(4) { width: 20%; }
+
+.kpi-table tbody td {
+  padding: 5px 10px; border-bottom: 1px solid rgba(0,0,0,0.03);
+  text-align: right; font-variant-numeric: tabular-nums;
+  vertical-align: middle; transition: background 0.12s;
+}
+.kpi-table tbody tr:last-child td { border-bottom: none; }
+.kpi-table tbody tr:hover td { background: rgba(37,99,235,0.04); }
+.kpi-table tbody td:first-child { text-align: left; font-weight: 600; color: var(--ink2); font-size: 11px; word-break: break-word; overflow-wrap: anywhere; }
+.kpi-table .num-val { font-weight: 700; color: var(--ink); font-family: 'JetBrains Mono', monospace; font-size: 11px; white-space: nowrap; }
+.kpi-table .num-target { font-weight: 500; color: var(--ink2); font-family: 'JetBrains Mono', monospace; font-size: 11px; white-space: nowrap; }
+.kpi-table .score-badge { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 5px; display: inline-block; white-space: nowrap; }
+
+/* Quarterly Panel */
+.qpanel {
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  overflow: hidden; box-shadow: var(--sh1);
+  position: sticky; top: 68px; width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+}
+.qpanel-head {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+  padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;
+}
+.qpanel-head h3 { font-size: 11px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 0.8px; }
+.qpanel-head span { background: rgba(255,255,255,0.18); color: white; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+.qbody { padding: 6px; overflow-x: auto; flex: 1; display: flex; flex-direction: column; }
+
+/* Quarterly table */
+.qtbl { width: 100%; border-collapse: collapse; font-size: 11px; table-layout: fixed; }
+.qtbl thead th {
+  background: linear-gradient(135deg, var(--navy), var(--navy2));
+  color: white; font-size: 10px; font-weight: 700;
+  padding: 8px 4px; text-align: center;
+  border-right: 1px solid rgba(255,255,255,0.12);
+  white-space: nowrap; text-transform: uppercase; letter-spacing: 0.4px;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.qtbl thead th:last-child { border-right: none; background: linear-gradient(135deg, var(--navy2), var(--teal2)); }
+.qtbl thead th:first-child { text-align: left; padding-left: 10px; width: 22%; }
+.qtbl thead th:nth-child(2) { width: 15.6%; }
+.qtbl thead th:nth-child(3) { width: 15.6%; }
+.qtbl thead th:nth-child(4) { width: 15.6%; }
+.qtbl thead th:nth-child(5) { width: 15.6%; }
+.qtbl thead th:nth-child(6) { width: 15.6%; }
+.qtbl tbody td {
+  padding: 6px 4px; border-bottom: 1px solid var(--border);
+  text-align: center; vertical-align: middle; transition: background 0.15s;
+  font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.qtbl tbody td:first-child {
+  text-align: left; font-weight: 600; font-size: 11px; padding-left: 10px;
+  background: rgba(26,58,110,0.03); color: var(--ink2);
+  border-right: 1px solid var(--border); white-space: normal; word-break: break-word; overflow-wrap: anywhere;
+}
+.qtbl tbody td:last-child { background: rgba(37,99,235,0.04); font-weight: 700; }
+.qtbl tbody tr:hover td { background: rgba(37,99,235,0.05); }
+.qtbl tbody tr:hover td:first-child { background: rgba(37,99,235,0.08); color: var(--navy2); }
+.qs-val { font-weight: 700; font-size: 11px; padding: 3px 8px; border-radius: 5px; display: inline-block; white-space: nowrap; }
+.qs-val:not(.neg):not(.pos):not(.zero) { color: var(--ink3); background: transparent; padding: 3px 0; }
+
+/* States */
+.err-box {
+  background: var(--red-bg); border: 1.5px solid var(--red-bg2); color: var(--red);
+  border-radius: 10px; padding: 10px 14px; margin-bottom: 12px;
+  font-size: 12px; font-weight: 600; display: none;
+  backdrop-filter: blur(10px);
+}
+.err-box.on { display: block; }
+.spin-icon { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(37,99,235,0.15); border-top-color: var(--navy2); border-radius: 50%; animation: spinR 0.7s linear infinite; vertical-align: middle; margin-right: 5px; }
+@keyframes spinR { to{transform:rotate(360deg)} }
+.loading-txt { text-align: center; padding: 30px; color: var(--ink4); font-size: 12px; }
+
+footer {
+  text-align: center; padding: 14px;
+  font-size: 10.5px; color: var(--ink4);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  border-top: 1px solid var(--border); margin-top: 4px;
+}
+footer .f-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border2); }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+/* ════════════════════════════════════════════════════════════════
+   CHANGE PASSWORD MODAL
+   ════════════════════════════════════════════════════════════════ */
+.cpw-overlay {
+  display: none; position: fixed; inset: 0; z-index: 1000;
+  background: rgba(10,25,60,0.55);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  align-items: center; justify-content: center;
+}
+.cpw-overlay.on { display: flex; }
+
+.cpw-modal {
+  background: #fff; border-radius: 20px;
+  width: 100%; max-width: 420px; margin: 16px;
+  box-shadow: 0 24px 80px rgba(15,36,72,0.28), 0 0 0 1px rgba(99,130,200,0.10);
+  animation: modalIn 0.22s cubic-bezier(.22,1,.36,1) both; overflow: hidden;
+}
+@keyframes modalIn { from{opacity:0;transform:translateY(16px) scale(0.97)} to{opacity:1;transform:none} }
+
+.cpw-header {
+  background: linear-gradient(135deg, #1a3a6e, #2563eb);
+  padding: 18px 22px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: relative;
+}
+.cpw-header::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--teal), #6366f1, var(--green), var(--gold));
+}
+.cpw-header h3 { font-size: 15px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 9px; }
+.cpw-header h3 svg { width: 16px; height: 16px; stroke: rgba(255,255,255,0.7); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.cpw-close {
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 8px; width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: rgba(255,255,255,0.80); font-size: 18px; line-height: 1;
+  transition: background 0.15s;
+}
+.cpw-close:hover { background: rgba(255,255,255,0.25); }
+
+.cpw-body { padding: 22px 24px 6px; }
+.cpw-field { margin-bottom: 15px; }
+.cpw-field label {
+  display: block; font-size: 10.5px; font-weight: 700;
+  color: var(--ink3); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 6px;
+}
+.cpw-wrap { position: relative; }
+.cpw-input {
+  width: 100%; padding: 11px 40px 11px 14px;
+  background: rgba(255,255,255,0.9); border: 1.5px solid rgba(99,130,200,0.20);
+  border-radius: 11px; outline: none;
+  font-family: 'DM Sans', sans-serif; font-size: 13.5px; color: var(--ink);
+  transition: all 0.2s; caret-color: var(--navy2);
+}
+.cpw-input:focus { border-color: var(--navy2); box-shadow: 0 0 0 4px rgba(37,99,235,0.10); background: #fff; }
+.cpw-input.bad  { border-color: var(--red); box-shadow: 0 0 0 4px rgba(220,38,38,0.08); }
+.cpw-eye {
+  position: absolute; right: 11px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; color: var(--ink4);
+  display: flex; transition: color 0.15s;
+}
+.cpw-eye:hover { color: var(--ink3); }
+.cpw-eye svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Strength bar */
+.cpw-str { margin-top: 7px; display: none; }
+.cpw-str-bar { height: 4px; border-radius: 4px; background: var(--bg3); overflow: hidden; margin-bottom: 3px; }
+.cpw-str-fill { height: 100%; border-radius: 4px; transition: width 0.3s, background 0.3s; width: 0; }
+.cpw-str-lbl { font-size: 10px; font-weight: 600; }
+.str-w .cpw-str-fill { width: 33%;  background: var(--red);    } .str-w .cpw-str-lbl { color: var(--red);    }
+.str-m .cpw-str-fill { width: 66%;  background: var(--gold);   } .str-m .cpw-str-lbl { color: #d97706;      }
+.str-s .cpw-str-fill { width: 100%; background: var(--green2); } .str-s .cpw-str-lbl { color: var(--green2); }
+
+.cpw-hint { margin-top: 4px; font-size: 10.5px; color: var(--ink4); }
+
+.cpw-alert {
+  border-radius: 10px; padding: 10px 13px; margin-bottom: 14px;
+  font-size: 12px; font-weight: 500; display: none; align-items: center; gap: 9px;
+}
+.cpw-alert.on { display: flex; }
+.cpw-alert svg { width: 14px; height: 14px; fill: none; stroke-width: 2; stroke-linecap: round; flex-shrink: 0; }
+.cpw-alert.err { background: var(--red-bg);  border: 1px solid var(--red-bg2);  color: var(--red);  }
+.cpw-alert.err svg { stroke: var(--red);   }
+.cpw-alert.ok  { background: var(--grn-bg); border: 1px solid var(--grn-bg2);  color: var(--grn);  }
+.cpw-alert.ok  svg { stroke: var(--grn); }
+@keyframes shake { 0%,100%{transform:none} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+.cpw-alert.err.on { animation: shake 0.3s ease; }
+
+.cpw-footer { padding: 10px 24px 22px; display: flex; gap: 10px; }
+.cpw-cancel {
+  flex: 1; padding: 11px; border-radius: 11px;
+  border: 1.5px solid var(--border2); background: var(--bg);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  color: var(--ink3); cursor: pointer; transition: all 0.15s;
+}
+.cpw-cancel:hover { border-color: var(--navy2); color: var(--navy2); }
+.cpw-save {
+  flex: 2; padding: 11px; border-radius: 11px; border: none;
+  background: linear-gradient(135deg, #1a3a6e, #2563eb);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700;
+  color: #fff; cursor: pointer; transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(37,99,235,0.32);
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+.cpw-save:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(37,99,235,0.42); }
+.cpw-save:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.cpw-save .cpw-spin { display: none; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spinR 0.65s linear infinite; }
+.cpw-save.loading .cpw-spin { display: block; }
+
+.btn-chpw {
+  background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 8px; padding: 5px 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 10.5px; font-weight: 600;
+  color: rgba(255,255,255,0.75); cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 5px;
+}
+.btn-chpw:hover { background: rgba(56,189,248,0.20); border-color: rgba(56,189,248,0.35); color: var(--teal); }
+.btn-chpw svg { stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.wcard:nth-child(1) { animation-delay: 0s; }
+.wcard:nth-child(2) { animation-delay: 0.05s; }
+.wcard:nth-child(3) { animation-delay: 0.1s; }
+
+@media(max-width:768px) {
+  .page { padding: 10px 14px; }
+  .dash-hdr { padding: 12px 14px; }
+  .main-grid { grid-template-columns: 1fr; }
+  .qpanel { position: static; }
+  .nav-live { display: none; }
+  .overview-grid { grid-template-columns: 1fr; }
+
+  /* ── Two-row navbar on mobile ── */
+  .topnav {
+    padding: 8px 12px;
+    height: auto;
+    flex-wrap: wrap;
+    gap: 0;
+    row-gap: 0;
+    align-items: center;
+  }
+
+  /* Row 1: brand takes full width */
+  .nav-brand {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .nav-brand h1 { font-size: 13px; }
+  .nav-company { display: none; }
+  .nav-logo { width: 90px; height: 30px; }
+
+  /* Row 2: right controls — full width, user pushed to far right */
+  .nav-right {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-top: 7px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    margin-top: 7px;
+    justify-content: flex-start;
+  }
+
+  /* Hide non-essential items */
+  .nav-yr { display: none; }
+  .nav-div { display: none; }
+
+  /* Icon-only buttons */
+  .btn-refresh-txt { display: none; }
+  .btn-chpw-txt { display: none; }
+  .btn-refresh { padding: 5px 8px; flex-shrink: 0; }
+  .btn-chpw   { padding: 5px 8px; flex-shrink: 0; }
+
+  /* Push user pill to far right */
+  .nav-user {
+    margin-left: auto;
+    padding: 4px 8px;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+  .nav-role { display: none; }
+  .nav-nm { font-size: 11px; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .btn-logout { font-size: 10px; padding-left: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Animated background layer (matches login.html) -->
+<div class="bg-layer">
+  <div class="bg-grid"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<div id="mainWrap">
+
+  <!-- ── TOP NAV ────────────────────────────────────── -->
+  <nav class="topnav">
+    <div class="nav-brand">
+      <div class="nav-logo">
+        <img src="consern.png" alt="Consern Pharma"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <svg style="display:none" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div class="nav-brand-text">
+        <h1>KRA <span>/</span> KPI Dashboard</h1>
+        <span class="nav-company">Consern Pharma · Ludhiana</span>
+      </div>
+    </div>
+    <div class="nav-right">
+      <div class="nav-live">
+        <div class="nav-live-dot"></div>
+        <span>Live</span>
+      </div>
+      <span class="nav-yr">FY 2026–27</span>
+      <div class="nav-div"></div>
+      <button class="btn-refresh" id="refreshBtn" onclick="handleRefresh()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        <span class="btn-refresh-txt">Refresh</span>
+      </button>
+      <button class="btn-chpw" onclick="cpwOpen()">
+        <svg width="12" height="12" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span class="btn-chpw-txt">Change Password</span>
+      </button>
+      <div class="nav-user">
+        <div class="nav-av" id="navAv">?</div>
+        <span class="nav-nm" id="navNm">–</span>
+        <span class="nav-role" id="navRole"></span>
+        <button class="btn-logout" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── ADMIN TABS ─────────────────────────────────── -->
+  <div id="adminTabs">
+    <span class="admin-label">
+      <svg style="width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;vertical-align:middle;margin-right:4px" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Team
+    </span>
+    <div id="empTabsInner" style="display:flex"></div>
+    <button class="btn-overview" id="btnOverview" onclick="showOverview()">
+      <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Overview
+    </button>
+  </div>
+
+  <!-- ── PAGE ───────────────────────────────────────── -->
+  <div class="page">
+    <div class="err-box" id="errBox"></div>
+
+    <!-- Admin overview grid -->
+    <div id="adminOverview">
+      <p class="overview-title">Team <em>Overview</em></p>
+      <p class="overview-sub">Click any card to view detailed dashboard</p>
+      <div class="overview-grid" id="overviewGrid"></div>
+    </div>
+
+    <!-- Individual dashboard -->
+    <div id="dashView">
+      <div class="dash-hdr">
+        <div>
+          <h2 id="dashTitle">Loading…</h2>
+          <div class="upd" id="dashUpd">–</div>
+        </div>
+        <div class="hdr-chips">
+          <span class="chip live"><div class="chip-dot"></div>Live</span>
+          <span class="chip dept" id="deptChip">–</span>
+          <span class="chip yr">Q1 · Apr–Jun 2026</span>
+        </div>
+      </div>
+
+      <div class="main-grid">
+        <div class="wpanel">
+          <div class="panel-top">
+            <div><h3>Weekly Performance</h3><p>Toggle weeks to compare</p></div>
+            <div class="wk-btns" id="wkBtns"></div>
+          </div>
+          <div class="cards-body">
+            <div class="cards-row" id="row1"></div>
+            <div class="cards-row" id="row2"></div>
+          </div>
+        </div>
+
+        <div class="qpanel">
+          <div class="qpanel-head">
+            <h3>Annually</h3>
+            <span>Summary</span>
+          </div>
+          <div class="qbody" id="qbody"></div>
+        </div>
+      </div>
+
+      <footer>
+        <span>© 2026 Consern Pharma Limited. All Rights Reserved.</span>
+      </footer>
+    </div>
+  </div>
+</div>
+
+<!-- ── CHANGE PASSWORD MODAL ─────────────────────────────── -->
+<div class="cpw-overlay" id="cpwOverlay" onclick="if(event.target===this)cpwClose()">
+  <div class="cpw-modal">
+    <div class="cpw-header">
+      <h3>
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Change Password
+      </h3>
+      <button class="cpw-close" onclick="cpwClose()">×</button>
+    </div>
+    <div class="cpw-body">
+      <div class="cpw-alert err" id="cpwErr">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="cpwErrMsg"></span>
+      </div>
+      <div class="cpw-alert ok" id="cpwOk">
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span>Password changed successfully! You can now use your new password.</span>
+      </div>
+      <div class="cpw-field">
+        <label>Current Password</label>
+        <div class="cpw-wrap">
+          <input class="cpw-input" type="password" id="cpwOld" placeholder="Enter current password"
+            oninput="cpwClear()" onkeydown="if(event.key==='Enter')document.getElementById('cpwNew').focus()">
+          <button class="cpw-eye" type="button" onclick="cpwEye('cpwOld',this)">
+            <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="cpw-field">
+        <label>New Password</label>
+        <div class="cpw-wrap">
+          <input class="cpw-input" type="password" id="cpwNew" placeholder="Min. 6 characters"
+            oninput="cpwStrength(this.value);cpwClear()"
+            onkeydown="if(event.key==='Enter')document.getElementById('cpwConf').focus()">
+          <button class="cpw-eye" type="button" onclick="cpwEye('cpwNew',this)">
+            <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="cpw-str" id="cpwStr">
+          <div class="cpw-str-bar"><div class="cpw-str-fill" id="cpwStrFill"></div></div>
+          <span class="cpw-str-lbl" id="cpwStrLbl"></span>
+        </div>
+        <div class="cpw-hint">Minimum 6 characters</div>
+      </div>
+      <div class="cpw-field" style="margin-bottom:0">
+        <label>Confirm New Password</label>
+        <div class="cpw-wrap">
+          <input class="cpw-input" type="password" id="cpwConf" placeholder="Re-enter new password"
+            oninput="cpwClear()" onkeydown="if(event.key==='Enter')cpwSave()">
+          <button class="cpw-eye" type="button" onclick="cpwEye('cpwConf',this)">
+            <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="cpw-footer">
+      <button class="cpw-cancel" onclick="cpwClose()">Cancel</button>
+      <button class="cpw-save" id="cpwSaveBtn" onclick="cpwSave()">
+        <div class="cpw-spin"></div>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Update Password
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  CONFIG
+// ════════════════════════════════════════════════════════════════
+const API_URL = 'https://script.google.com/macros/s/AKfycbytGcnlkKT-BQ5UKc1C83vUAQ2i6-UZq1AO6DUkyHszBPdUbNbr7CH8H-9vnPiUl3eK/exec';
+
+// ════════════════════════════════════════════════════════════════
+//  fetch() helper — works on all browsers including mobile
+// ════════════════════════════════════════════════════════════════
+async function apiFetch(url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12000);
+  try {
+    const resp = await fetch(url, { method: 'GET', mode: 'cors', signal: controller.signal });
+    clearTimeout(timer);
+    if (!resp.ok) throw new Error('network');
+    return await resp.json();
+  } catch(e) {
+    clearTimeout(timer);
+    if (e.name === 'AbortError') throw new Error('timeout');
+    throw new Error('network');
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════════════
+let CU          = null;
+let selectedTab = null;
+let dashData    = null;
+let activeWks   = new Set();
+let cache       = {};
+let empList     = [];
+let isOverview  = false;
+
+const $ = id => document.getElementById(id);
+
+// ════════════════════════════════════════════════════════════════
+//  AUTH
+// ════════════════════════════════════════════════════════════════
+function logout() {
+  CU = null; selectedTab = null; dashData = null; cache = {}; empList = [];
+  sessionStorage.removeItem('kra_s');
+  window.location.href = 'index.html';
+}
+
+function checkSession() {
+  try {
+    const s = sessionStorage.getItem('kra_s');
+    if (s) { CU = JSON.parse(s); openDash(); }
+    else   { window.location.replace('index.html'); }
+  } catch(e) { window.location.replace('index.html'); }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  OPEN DASHBOARD
+// ════════════════════════════════════════════════════════════════
+function openDash() {
+  $('mainWrap').style.display = 'block';
+  const inits = CU.name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();
+  $('navAv').textContent   = inits;
+  $('navNm').textContent   = CU.name;
+  $('navRole').textContent = CU.role === 'admin' ? '· Admin' : '';
+
+  if (CU.role === 'admin') {
+    $('adminTabs').classList.add('on');
+    loadAdminTabs();
+  } else {
+    $('adminTabs').classList.remove('on');
+    $('btnOverview') && ($('btnOverview').style.display = 'none');
+    selectedTab = CU.sheetTab;
+    $('dashTitle').innerHTML = esc(CU.name) + "'s <span>Performance</span>";
+    fetchData();
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  ADMIN — LOAD TABS
+// ════════════════════════════════════════════════════════════════
+async function loadAdminTabs() {
+  empList = [];
+
+  // Pull employee names from Users sheet
+  try {
+    const url = API_URL + '?action=getUsers&adminUser=' + encodeURIComponent(CU.id) + '&adminPass=' + encodeURIComponent(CU.pw);
+    const j   = await apiFetch(url);
+    if (j.success && j.users) {
+      empList = j.users
+        .filter(u => u.role === 'employee' && u.sheetTab)
+        .map(u => ({ id: u.email, name: u.name, sheetTab: u.sheetTab }));
+    }
+  } catch(e) {
+    // fallback: use sheet tab names only
+  }
+
+  // Auto-discover any sheet tabs not in Users sheet
+  try {
+    const j = await apiFetch(API_URL + '?list=1');
+    if (j.success && j.tabs) {
+      const known = new Set(empList.map(e => e.sheetTab.toLowerCase()));
+      j.tabs.forEach(t => {
+        if (!known.has(t.toLowerCase())) {
+          empList.push({ id: '_auto_' + t, name: t.charAt(0).toUpperCase() + t.slice(1), sheetTab: t });
+        }
+      });
+    }
+  } catch(e) {}
+
+  renderTabs();
+
+  empList.forEach(e => {
+    apiFetch(API_URL + '?employee=' + encodeURIComponent(e.sheetTab))
+      .then(d => { if (d.success) { cache[e.sheetTab] = d; renderTabs(); if (isOverview) renderOverview(); } })
+      .catch(() => {});
+  });
+
+  if (empList.length) selectTab(empList[0]);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  RENDER TABS
+// ════════════════════════════════════════════════════════════════
+function renderTabs() {
+  $('empTabsInner').innerHTML = empList.map(e => {
+    const d    = cache[e.sheetTab];
+    const raw  = d ? d.summary.WTD_Total : null;
+    const sc   = (raw === null || raw === undefined || isNaN(raw)) ? (d ? 0 : null) : raw;
+    const cl   = sc === null ? 'loading' : sc >= 0 ? 'pos' : 'neg';
+    const lbl  = sc !== null ? fmt(sc) : '…';
+    const on  = selectedTab === e.sheetTab && !isOverview ? ' on' : '';
+    return `<button class="emp-tab${on}" onclick="selectTab({sheetTab:'${eAttr(e.sheetTab)}',name:'${eAttr(e.name)}'})">
+      ${esc(e.name)}<span class="tab-sc ${cl}">${lbl}</span>
+    </button>`;
+  }).join('');
+  if ($('btnOverview')) $('btnOverview').classList.toggle('on', isOverview);
+}
+
+function selectTab(emp) {
+  isOverview  = false;
+  selectedTab = emp.sheetTab;
+  $('adminOverview').classList.remove('on');
+  $('dashView').style.display = 'block';
+  $('dashTitle').innerHTML = esc(emp.name) + "'s <span>Performance</span>";
+  renderTabs();
+  if (cache[emp.sheetTab]) {
+    dashData  = cache[emp.sheetTab];
+    activeWks = defaultWeeks(dashData.weeks);
+    $('dashUpd').textContent    = 'Cached · Updated ' + new Date(dashData.lastUpdated).toLocaleTimeString();
+    $('deptChip').textContent   = dashData.department || '–';
+    render();
+  } else { fetchData(); }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  ADMIN OVERVIEW
+// ════════════════════════════════════════════════════════════════
+function showOverview() {
+  isOverview  = true;
+  selectedTab = null;
+  $('dashView').style.display = 'none';
+  $('adminOverview').classList.add('on');
+  $('errBox').classList.remove('on');
+  renderTabs();
+  renderOverview();
+}
+
+function renderOverview() {
+  const grid = $('overviewGrid');
+  if (!empList.length) { grid.innerHTML = '<p style="color:var(--ink4);font-size:12px">No employees found.</p>'; return; }
+
+  grid.innerHTML = empList.map(e => {
+    const d = cache[e.sheetTab];
+    if (!d) return `<div class="emp-card" onclick="selectTab({sheetTab:'${eAttr(e.sheetTab)}',name:'${eAttr(e.name)}'})">
+      <div class="emp-card-top"><div class="emp-av">${empInitials(e.name)}</div>
+        <div class="emp-card-info"><div class="emp-card-name">${esc(e.name)}</div><div class="emp-card-dept">Loading…</div></div></div>
+      <div class="emp-card-loading"><span class="spin-icon"></span>Fetching data…</div></div>`;
+
+    const totRaw = d.summary.WTD_Total;
+    const tot  = (totRaw === null || totRaw === undefined || isNaN(totRaw)) ? 0 : totRaw;
+    const sc   = tot >= 0 ? 'pos' : 'neg';
+    const scLbl= sc === 'pos' ? 'On Track' : 'Below Target';
+    const kpiRows = d.kpiList.slice(0,3).map(k => {
+      const ad = d.summary['WTD_'+k.k+'_AD'] || fmtVal(d.summary['WTD_'+k.k+'_A']||0);
+      const pd = d.summary['WTD_'+k.k+'_PD'] || fmtVal(d.summary['WTD_'+k.k+'_P']||0);
+      return `<div class="kpi-row"><span class="kpi-row-name">${esc(k.n)}</span>
+        <span class="kpi-row-vals">
+          <span class="kpi-actual">${esc(ad)}</span>
+          <span class="kpi-slash">/</span>
+          <span class="kpi-target">${esc(pd)}</span>
+        </span></div>`;
+    }).join('');
+    return `<div class="emp-card" onclick="selectTab({sheetTab:'${eAttr(e.sheetTab)}',name:'${eAttr(e.name)}'})">
+      <div class="emp-card-top">
+        <div class="emp-av">${empInitials(e.name)}</div>
+        <div class="emp-card-info"><div class="emp-card-name">${esc(e.name)}</div><div class="emp-card-dept">${esc(d.department||'Operations')}</div></div>
+        <div class="emp-card-score ${sc}">${fmt(tot)}</div>
+      </div>
+      <div class="emp-card-kpis">${kpiRows||'<div style="font-size:11px;color:var(--ink4)">No KPI data</div>'}</div>
+      <div class="emp-card-footer">
+        <span class="emp-card-badge ${sc}">${scLbl}</span>
+        <span class="emp-card-action">View Dashboard <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      </div></div>`;
+  }).join('');
+}
+
+function empInitials(name) {
+  return name.split(' ').filter(w=>/[a-zA-Z]/.test(w)).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  DATA FETCH
+// ════════════════════════════════════════════════════════════════
+async function apiGet(tab) {
+  const j = await apiFetch(API_URL + '?employee=' + encodeURIComponent(tab));
+  if (!j.success) throw new Error(j.error);
+  return j;
+}
+
+async function fetchData() {
+  const btn = $('refreshBtn');
+  btn.disabled = true;
+  $('errBox').classList.remove('on');
+  $('dashUpd').textContent = 'Loading…';
+  try {
+    dashData  = await apiGet(selectedTab);
+    cache[selectedTab] = dashData;
+    activeWks = defaultWeeks(dashData.weeks);
+    $('dashUpd').textContent  = 'Live · Updated ' + new Date(dashData.lastUpdated).toLocaleTimeString();
+    $('deptChip').textContent = dashData.department || '–';
+    if (CU.role === 'admin') { renderTabs(); if (isOverview) renderOverview(); }
+    render();
+  } catch(err) {
+    $('errBox').textContent = '⚠ ' + err.message;
+    $('errBox').classList.add('on');
+    $('dashUpd').textContent = 'Failed to load';
+  } finally { btn.disabled = false; }
+}
+
+function handleRefresh() {
+  if (isOverview) {
+    cache = {};
+    empList.forEach(e => {
+      apiFetch(API_URL + '?employee=' + encodeURIComponent(e.sheetTab))
+        .then(d => { if (d.success) { cache[e.sheetTab] = d; renderTabs(); renderOverview(); } })
+        .catch(()=>{});
+    });
+  } else { fetchData(); }
+}
+
+function defaultWeeks(weeks) {
+  const now = new Date(); now.setHours(0,0,0,0);
+  const past = weeks.filter(w => { const d = pd(w.t); return d && d < now; });
+  past.sort((a,b) => pd(b.t) - pd(a.t));
+  const s = new Set();
+  for (let i = 0; i < Math.min(2, past.length); i++) s.add(past[i].id);
+  return s;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  RENDER
+// ════════════════════════════════════════════════════════════════
+function render() {
+  if (!dashData) return;
+  const { weeks, summary, kpiList } = dashData;
+  $('wkBtns').innerHTML = weeks.map(w =>
+    `<button class="wk-btn${activeWks.has(w.id)?' on':''}" onclick="togWk('${w.id}')">${w.id}</button>`
+  ).join('');
+  const active = weeks.filter(w => activeWks.has(w.id)).sort((a,b) => +a.id.slice(1) - +b.id.slice(1));
+  const recent = active.slice(-2), older = active.slice(0,-2);
+  $('row1').innerHTML = [...recent.map(w => weekCard(w,kpiList)), wtdCard(summary,kpiList)].join('');
+  $('row2').innerHTML = older.map(w => weekCard(w,kpiList)).join('');
+  renderQ(summary, kpiList);
+}
+
+function weekCard(w, kpiList) {
+  const rows = w.kpis.map(k =>
+    `<tr><td>${esc(k.n)}</td>
+      <td class="num-target">${esc(k.pd)}</td>
+      <td class="num-val">${esc(k.ad)}</td>
+      <td><span class="score-badge ${scW(k.s)}">${fmt(k.s)}</span></td></tr>`
+  ).join('');
+  const sc = scW(w.ws);
+  return `<div class="wcard">
+    <div class="wcard-header">
+      <h4>${esc(w.l)}</h4>
+      <span class="wcard-daterange">
+        <svg width="11" height="11" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        ${w.f} – ${w.t}
+      </span>
+    </div>
+    <table class="kpi-table">
+      <thead><tr><th>KPI</th><th>Target</th><th>Actual</th><th>Score</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="wcard-score-bar">
+      <span class="wsb-label">Score</span>
+      <span class="wsb-val"><span class="qs-val ${sc}">${fmt(w.ws)}</span></span>
+    </div></div>`;
+}
+
+function wtdCard(summary, kpiList) {
+  const tot  = summary.WTD_Total || 0;
+  const rows = kpiList.map(k => {
+    const a  = summary['WTD_'+k.k+'_A']  || 0;
+    const p  = summary['WTD_'+k.k+'_P']  || 0;
+    const s  = summary['WTD_'+k.k+'_S']  || 0;
+    const ad = summary['WTD_'+k.k+'_AD'] || fmtVal(a);
+    const pd = summary['WTD_'+k.k+'_PD'] || fmtVal(p);
+    return `<tr><td>${esc(k.n)}</td>
+      <td class="num-target">${esc(pd)}</td>
+      <td class="num-val">${esc(ad)}</td>
+      <td><span class="score-badge ${scW(s)}">${fmt(s)}</span></td></tr>`;
+  }).join('');
+  const sc = scW(tot);
+  return `<div class="wcard wtd">
+    <div class="wcard-header">
+      <h4>WTD</h4>
+      <span class="wcard-daterange">
+        <svg width="11" height="11" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Week Till Date
+      </span>
+    </div>
+    <table class="kpi-table">
+      <thead><tr><th>KPI</th><th>Target</th><th>Actual</th><th>Score</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="wcard-score-bar">
+      <span class="wsb-label">Score</span>
+      <span class="wsb-val"><span class="qs-val ${sc}">${fmt(tot)}</span></span>
+    </div></div>`;
+}
+
+function renderQ(summary, kpiList) {
+  let h = `<table class="qtbl"><thead><tr>
+    <th>KPI</th>
+    <th>Q1<br><span style="font-size:8px;opacity:.7">Apr–Jun</span></th>
+    <th>Q2<br><span style="font-size:8px;opacity:.7">Jul–Sep</span></th>
+    <th>Q3<br><span style="font-size:8px;opacity:.7">Oct–Dec</span></th>
+    <th>Q4<br><span style="font-size:8px;opacity:.7">Jan–Mar</span></th>
+    <th>Annual</th>
+  </tr></thead><tbody>`;
+  kpiList.forEach(k => {
+    const a  = summary['WTD_'+k.k+'_A']  || 0;
+    const ad = summary['WTD_'+k.k+'_AD'] || fmtVal(a);
+    h += `<tr><td>${esc(k.n)}</td>
+      <td><span class="qs-val">${esc(ad)}</span></td>
+      <td><span class="qs-val">–</span></td>
+      <td><span class="qs-val">–</span></td>
+      <td><span class="qs-val">–</span></td>
+      <td><span class="qs-val">${esc(ad)}</span></td></tr>`;
+  });
+  const tot = summary.WTD_Total || 0;
+  h += `<tr style="border-top:2px solid rgba(37,99,235,0.3)">
+    <td style="background:linear-gradient(135deg,var(--navy),var(--navy2));color:white;font-weight:700">Score</td>
+    <td><span class="qs-val ${scQ(tot)}" style="font-size:11px">${fmt(tot)}</span></td>
+    <td><span class="qs-val" style="font-size:11px;color:var(--ink4)">–</span></td>
+    <td><span class="qs-val" style="font-size:11px;color:var(--ink4)">–</span></td>
+    <td><span class="qs-val" style="font-size:11px;color:var(--ink4)">–</span></td>
+    <td style="background:rgba(37,99,235,0.06)"><span class="qs-val ${scQ(tot)}" style="font-size:11px">${fmt(tot)}</span></td>
+  </tr></tbody></table>`;
+  $('qbody').innerHTML = h;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  CHANGE PASSWORD
+// ════════════════════════════════════════════════════════════════
+function cpwOpen() {
+  ['cpwOld','cpwNew','cpwConf'].forEach(id => $( id).value = '');
+  cpwClear();
+  $('cpwOk').classList.remove('on');
+  $('cpwStr').style.display = 'none';
+  $('cpwSaveBtn').disabled = false;
+  $('cpwSaveBtn').classList.remove('loading');
+  $('cpwOverlay').classList.add('on');
+  setTimeout(() => $('cpwOld').focus(), 120);
+}
+function cpwClose() { $('cpwOverlay').classList.remove('on'); }
+function cpwClear() {
+  $('cpwErr').classList.remove('on');
+  ['cpwOld','cpwNew','cpwConf'].forEach(id => $( id).classList.remove('bad'));
+}
+function cpwEye(inputId, btn) {
+  const inp = $(inputId);
+  const hidden = inp.type === 'password';
+  inp.type = hidden ? 'text' : 'password';
+  btn.querySelector('svg').innerHTML = hidden
+    ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`
+    : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+}
+function cpwStrength(val) {
+  const el = $('cpwStr');
+  if (!val) { el.style.display='none'; return; }
+  el.style.display = 'block';
+  const score = (val.length>=8?1:0) + (/[A-Z]/.test(val)?1:0) + (/[a-z]/.test(val)?1:0) + (/[0-9]/.test(val)?1:0) + (/[^A-Za-z0-9]/.test(val)?1:0);
+  const parent = el.parentElement;
+  parent.classList.remove('str-w','str-m','str-s');
+  if      (score<=2) { parent.classList.add('str-w'); $('cpwStrLbl').textContent='Weak';   }
+  else if (score<=3) { parent.classList.add('str-m'); $('cpwStrLbl').textContent='Medium'; }
+  else               { parent.classList.add('str-s'); $('cpwStrLbl').textContent='Strong'; }
+}
+async function cpwSave() {
+  cpwClear();
+  const oldPw  = $('cpwOld').value;
+  const newPw  = $('cpwNew').value;
+  const confPw = $('cpwConf').value;
+  if (!oldPw)                   { cpwErr('Please enter your current password.', 'cpwOld');   return; }
+  if (!newPw || newPw.length<6) { cpwErr('New password must be at least 6 characters.', 'cpwNew'); return; }
+  if (newPw !== confPw)         { cpwErr('New passwords do not match.', 'cpwConf');          return; }
+  if (newPw === oldPw)          { cpwErr('New password must be different from current.', 'cpwNew'); return; }
+
+  const btn = $('cpwSaveBtn');
+  btn.disabled = true; btn.classList.add('loading');
+  try {
+    const url  = API_URL + '?action=changePassword'
+      + '&email='       + encodeURIComponent(CU.id)
+      + '&oldPassword=' + encodeURIComponent(oldPw)
+      + '&newPassword=' + encodeURIComponent(newPw);
+    const data = await apiFetch(url);
+    if (!data.success) { cpwErr(data.error || 'Failed to update password.'); btn.disabled=false; btn.classList.remove('loading'); return; }
+    // Update session
+    CU.pw = newPw;
+    sessionStorage.setItem('kra_s', JSON.stringify(CU));
+    $('cpwOk').classList.add('on');
+    btn.disabled=false; btn.classList.remove('loading');
+    setTimeout(cpwClose, 2200);
+  } catch(e) {
+    cpwErr('Connection error. Please try again.');
+    btn.disabled=false; btn.classList.remove('loading');
+  }
+}
+function cpwErr(msg, inputId) {
+  $('cpwErrMsg').textContent = msg;
+  $('cpwErr').classList.add('on');
+  if (inputId) $(inputId).classList.add('bad');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  UTILS
+// ════════════════════════════════════════════════════════════════
+function togWk(id) { activeWks.has(id) ? activeWks.delete(id) : activeWks.add(id); render(); }
+const scQ    = v => { const n=parseFloat(v); return n>=0?'pos':'neg'; };
+const scW    = v => { const n=parseFloat(v); return n>=0?'pos':'neg'; };
+const fmt    = n => { const v=parseFloat(n); return isNaN(v)?'0':v%1===0?String(v):v.toFixed(1); };
+const fmtVal = n => { const v=parseFloat(n); if(isNaN(v))return'0'; return v%1===0?String(v):v.toFixed(1); };
+const pd     = s => { if(!s)return null; const p=String(s).split('/'); if(p.length===3)return new Date(p[2],p[1]-1,p[0]); return new Date(s); };
+const esc    = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const eAttr  = s => String(s||'').replace(/'/g,"\\'");
+
+checkSession();
+</script>
+</body>
+</html>
